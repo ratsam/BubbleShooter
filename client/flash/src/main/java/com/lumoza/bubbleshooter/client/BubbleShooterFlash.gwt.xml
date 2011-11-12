@@ -1,0 +1,10 @@
+<module rename-to='clientflash'>
+    <inherits name='playn.PlayNFlash'/>
+
+    <source path='core'/>
+    <source path='flash'/>
+
+    <public path="resources"/>
+
+    <entry-point class='com.lumoza.bubbleshooter.client.flash.BubbleShooterFlash'/>
+</module>
