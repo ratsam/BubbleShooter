@@ -9,6 +9,7 @@
     <parent>
         <groupId>com.lumoza.bubbleshooter</groupId>
         <artifactId>client</artifactId>
+        <relativePath>../pom.xml</relativePath>
         <version>1.0-SNAPSHOT</version>
     </parent>
 

@@ -3,31 +3,56 @@ package com.lumoza.bubbleshooter.client.core;
 import playn.core.Game;
 import playn.core.Image;
 import playn.core.ImageLayer;
+import playn.core.PlayN;
 
-import static playn.core.PlayN.assetManager;
-import static playn.core.PlayN.graphics;
-
+/**
+ * Core Bubble Shooter Game.
+ */
 public class BubbleShooter implements Game {
 
+    /**
+     * PlayN update frame rate.
+     */
+    private static final int UPDATE_FRAME_RATE = 25;
+
+    /**
+     * Init method.
+     */
     @Override
-    public void init() {
+    public final void init() {
         // create and add background image layer
-        Image bgImage = assetManager().getImage("images/bg.png");
-        ImageLayer bgLayer = graphics().createImageLayer(bgImage);
-        graphics().rootLayer().add(bgLayer);
+        Image bgImage = PlayN.assetManager().getImage("images/bg.png");
+        ImageLayer bgLayer = PlayN.graphics().createImageLayer(bgImage);
+        PlayN.graphics().rootLayer().add(bgLayer);
     }
 
+    /**
+     * Perform paint with specified alpha.
+     *
+     * @param alpha paint alpha
+     */
     @Override
-    public void paint(float alpha) {
-        // the background automatically paints itself, so no need to do anything here!
+    public final void paint(final float alpha) {
+        // the background automatically paints itself,
+        // so no need to do anything here!
     }
 
+    /**
+     * Perform update.
+     *
+     * @param delta time spent from last update
+     */
     @Override
-    public void update(float delta) {
+    public final void update(final float delta) {
     }
 
+    /**
+     * Return update rate.
+     *
+     * @return frame update rate
+     */
     @Override
-    public int updateRate() {
-        return 25;
+    public final int updateRate() {
+        return UPDATE_FRAME_RATE;
     }
 }
