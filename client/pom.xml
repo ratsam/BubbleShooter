@@ -23,6 +23,7 @@
     <modules>
         <module>core</module>
         <module>html</module>
+        <module>java</module>
 
         <!-- Temporary excluded Flash and Android client versions
         <module>flash</module>

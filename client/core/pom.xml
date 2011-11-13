@@ -15,10 +15,6 @@
     <artifactId>client-core</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <exec.mainClass>com.lumoza.bubbleshooter.client.java.BubbleShooterJava</exec.mainClass>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.googlecode.playn</groupId>

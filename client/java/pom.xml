@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Bubble Shooter Client Java Implementation</name>
+
+    <parent>
+        <groupId>com.lumoza.bubbleshooter</groupId>
+        <artifactId>client</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>client-java</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.lumoza.bubbleshooter</groupId>
+            <artifactId>client-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.playn</groupId>
+            <artifactId>playn-html</artifactId>
+            <version>${playn.version}</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <exec.mainClass>com.lumoza.bubbleshooter.client.java.BubbleShooterJava</exec.mainClass>
+    </properties>
+
+</project>
