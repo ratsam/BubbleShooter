@@ -30,6 +30,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                </configuration>
             </plugin>
         </plugins>
     </build>
