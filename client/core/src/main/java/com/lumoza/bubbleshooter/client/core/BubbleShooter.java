@@ -16,9 +16,10 @@ public class BubbleShooter implements Game, Keyboard.Listener {
      * PlayN update frame rate.
      */
     private static final int UPDATE_FRAME_RATE = 25;
+    private static final double CANNON_ANGLE_DELTA = 1.0d;
+
     private static Cannon cannon;
     private ImageLayer cannonLayer;
-    private static final double cannonAngleDelta = 1.0;
 
 
     /**
@@ -31,6 +32,13 @@ public class BubbleShooter implements Game, Keyboard.Listener {
         ImageLayer bgLayer = PlayN.graphics().createImageLayer(bgImage);
         PlayN.graphics().rootLayer().add(bgLayer);
 
+        createCannonLayer(bgImage);
+
+        cannon = new Cannon();
+        PlayN.keyboard().setListener(this);
+    }
+
+    private void createCannonLayer(Image bgImage) {
         Image cannonImage = PlayN.assetManager().getImage("images/cannon.png");
         cannonLayer = PlayN.graphics().createImageLayer(cannonImage);
         cannonLayer.setOrigin(cannonImage.width() / 2, cannonImage.height());
@@ -39,10 +47,6 @@ public class BubbleShooter implements Game, Keyboard.Listener {
             bgImage.height() - cannonImage.height() / 2
         );
         PlayN.graphics().rootLayer().add(cannonLayer);
-        
-
-        cannon = new Cannon();
-        PlayN.keyboard().setListener(this);
     }
 
     /**
@@ -79,13 +83,15 @@ public class BubbleShooter implements Game, Keyboard.Listener {
     public void onKeyDown(Keyboard.Event event) {
         switch (event.key()) {
             case LEFT:
-                cannon.tiltLeft(cannonAngleDelta);
+                cannon.tiltLeft(CANNON_ANGLE_DELTA);
                 break;
             case RIGHT:
-                cannon.tiltRight(cannonAngleDelta);
+                cannon.tiltRight(CANNON_ANGLE_DELTA);
                 break;
+            default:
+                // Do not process other keys.
         }
-        cannonLayer.setRotation(degreesToRadians(cannon.angle));
+        cannonLayer.setRotation(degreesToRadians(cannon.getAngle()));
     }
 
     private float degreesToRadians(double angle) {
