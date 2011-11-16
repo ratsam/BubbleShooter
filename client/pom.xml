@@ -6,6 +6,7 @@
     <name>Bubble Shooter PlayN Metaproject</name>
 
     <parent>
+        <!-- TODO: inline Google PlayN here and relocate parent to com.lumoza.bubbleshooter -->
         <groupId>com.googlecode.playn</groupId>
         <artifactId>playn-project</artifactId>
         <version>1.0</version>
@@ -18,10 +19,10 @@
 
     <build>
         <plugins>
-            <plugin>
+            <plugin> <!-- TODO: remove after inlining playn -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.8</version>
+                <version>${plugin.checkstyle.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -31,14 +32,32 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <configLocation>../config/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
                     <logViolationsToConsole>true</logViolationsToConsole>
+                    <failOnViolation>true</failOnViolation>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
+    <reporting>
+        <plugins>
+            <plugin> <!-- TODO: remove after inlining playn -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${plugin.checkstyle.version}</version>
+                <configuration>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <properties>
         <playn.version>1.0</playn.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- TODO: remove after inlining playn -->
+        <plugin.checkstyle.version>2.8</plugin.checkstyle.version> <!-- TODO: remove after inlining playn -->
     </properties>
 
     <modules>
