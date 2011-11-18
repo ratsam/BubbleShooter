@@ -21,6 +21,11 @@
             <artifactId>playn-java</artifactId>
             <version>${playn.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.playn</groupId>
+            <artifactId>playn-jbox2d</artifactId>
+            <version>${playn.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
