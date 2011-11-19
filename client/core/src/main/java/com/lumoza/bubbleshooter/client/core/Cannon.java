@@ -28,6 +28,11 @@ public class Cannon {
         tilt(delta);
     }
 
+    /**
+     * Tilt cannon for given angle (in degrees).
+     *
+     * @param delta angle to tilt
+     */
     public void tilt(double delta) {
         setAngle(getAllowedAngleByDelta(delta));
     }
