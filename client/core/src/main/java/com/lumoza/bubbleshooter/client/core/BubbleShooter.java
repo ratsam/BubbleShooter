@@ -1,5 +1,7 @@
 package com.lumoza.bubbleshooter.client.core;
 
+import com.lumoza.bubbleshooter.client.core.input.CannonAngleChangedListener;
+import com.lumoza.bubbleshooter.client.core.input.SimpleInputEventManager;
 import playn.core.Game;
 import playn.core.Image;
 import playn.core.ImageLayer;
@@ -18,6 +20,11 @@ public class BubbleShooter implements Game, Keyboard.Listener {
     private static final int UPDATE_FRAME_RATE = 25;
     private static final double CANNON_ANGLE_DELTA = 1.0d;
 
+    /**
+     * Temporary inner simple input event manager.
+     */
+    private SimpleInputEventManager inputEventManager = new SimpleInputEventManager();
+
     private Cannon cannon;
     private ImageLayer cannonLayer;
 
@@ -35,7 +42,7 @@ public class BubbleShooter implements Game, Keyboard.Listener {
         createCannonLayer(bgImage);
 
         cannon = new Cannon();
-        PlayN.keyboard().setListener(this);
+        setListeners();
     }
 
     private void createCannonLayer(Image bgImage) {
@@ -47,6 +54,17 @@ public class BubbleShooter implements Game, Keyboard.Listener {
             bgImage.height() - cannonImage.height() / 2
         );
         PlayN.graphics().rootLayer().add(cannonLayer);
+    }
+
+    private void setListeners() {
+        PlayN.keyboard().setListener(this);
+
+        inputEventManager.setOnCannonAngleChangedListener(new CannonAngleChangedListener() {
+            @Override
+            public void onAngleChanged(double angle) {
+                cannon.tilt(angle);
+            }
+        });
     }
 
     /**
@@ -83,13 +101,14 @@ public class BubbleShooter implements Game, Keyboard.Listener {
     public void onKeyDown(Keyboard.Event event) {
         switch (event.key()) {
             case LEFT:
-                cannon.tiltLeft(CANNON_ANGLE_DELTA);
+                inputEventManager.onCannonAngleChanged(-CANNON_ANGLE_DELTA);
                 break;
             case RIGHT:
-                cannon.tiltRight(CANNON_ANGLE_DELTA);
+                inputEventManager.onCannonAngleChanged(CANNON_ANGLE_DELTA);
                 break;
             default:
                 // Do not process other keys.
+                break;
         }
         cannonLayer.setRotation(degreesToRadians(cannon.getAngle()));
     }
