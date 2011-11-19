@@ -1,7 +1,7 @@
 package com.lumoza.bubbleshooter.client.core;
 
 import com.lumoza.bubbleshooter.client.core.input.CannonAngleChangedListener;
-import com.lumoza.bubbleshooter.client.core.input.InputEventManagerPlaynKeyboardImpl;
+import com.lumoza.bubbleshooter.client.core.input.InputEventManager;
 import playn.core.Game;
 import playn.core.Image;
 import playn.core.ImageLayer;
@@ -17,12 +17,8 @@ public class BubbleShooter implements Game {
      * PlayN update frame rate.
      */
     private static final int UPDATE_FRAME_RATE = 25;
-    private static final double CANNON_ANGLE_DELTA = 1.0d;
 
-    /**
-     * Temporary inner input event manager instantiation.
-     */
-    private InputEventManagerPlaynKeyboardImpl inputEventManager = new InputEventManagerPlaynKeyboardImpl(CANNON_ANGLE_DELTA);
+    private InputEventManager inputEventManager;
 
     private Cannon cannon;
     private ImageLayer cannonLayer;
@@ -56,8 +52,6 @@ public class BubbleShooter implements Game {
     }
 
     private void setListeners() {
-        PlayN.keyboard().setListener(inputEventManager);
-
         inputEventManager.setOnCannonAngleChangedListener(new CannonAngleChangedListener() {
             @Override
             public void onAngleChanged(double angle) {
@@ -99,5 +93,9 @@ public class BubbleShooter implements Game {
 
     private float degreesToRadians(double angle) {
        return (float) Math.toRadians(angle);
+    }
+
+    public void setInputEventManager(InputEventManager inputEventManager) {
+        this.inputEventManager = inputEventManager;
     }
 }

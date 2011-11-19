@@ -1,6 +1,7 @@
 package com.lumoza.bubbleshooter.client.java;
 
 import com.lumoza.bubbleshooter.client.core.BubbleShooter;
+import com.lumoza.bubbleshooter.client.core.input.InputEventManagerPlaynKeyboardImpl;
 import playn.core.Game;
 import playn.core.PlayN;
 import playn.java.JavaPlatform;
@@ -37,7 +38,11 @@ public class BubbleShooterRunner {
     }
 
     private Game createGame() {
+        final InputEventManagerPlaynKeyboardImpl inputEventManager = new InputEventManagerPlaynKeyboardImpl();
+        PlayN.keyboard().setListener(inputEventManager);
+
         final BubbleShooter game = new BubbleShooter();
+        game.setInputEventManager(inputEventManager);
         return game;
     }
 }
