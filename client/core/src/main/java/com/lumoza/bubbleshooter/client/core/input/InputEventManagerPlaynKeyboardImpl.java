@@ -7,6 +7,8 @@ import playn.core.Keyboard;
  */
 public class InputEventManagerPlaynKeyboardImpl extends SimpleInputEventManager implements Keyboard.Listener {
 
+    private static final double DEFAULT_ANGLE_DELTA = 1.0;
+
     private final double angleDelta;
 
     /**
@@ -16,6 +18,13 @@ public class InputEventManagerPlaynKeyboardImpl extends SimpleInputEventManager 
      */
     public InputEventManagerPlaynKeyboardImpl(double angleDelta) {
         this.angleDelta = angleDelta;
+    }
+
+    /**
+     * Default constructor.
+     */
+    public InputEventManagerPlaynKeyboardImpl() {
+        this(DEFAULT_ANGLE_DELTA);
     }
 
     @Override
