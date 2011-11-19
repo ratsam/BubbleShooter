@@ -1,18 +1,17 @@
 package com.lumoza.bubbleshooter.client.core;
 
 import com.lumoza.bubbleshooter.client.core.input.CannonAngleChangedListener;
-import com.lumoza.bubbleshooter.client.core.input.SimpleInputEventManager;
+import com.lumoza.bubbleshooter.client.core.input.InputEventManagerPlaynKeyboardImpl;
 import playn.core.Game;
 import playn.core.Image;
 import playn.core.ImageLayer;
-import playn.core.Keyboard;
 import playn.core.PlayN;
 
 
 /**
  * Core Bubble Shooter Game.
  */
-public class BubbleShooter implements Game, Keyboard.Listener {
+public class BubbleShooter implements Game {
 
     /**
      * PlayN update frame rate.
@@ -21,9 +20,9 @@ public class BubbleShooter implements Game, Keyboard.Listener {
     private static final double CANNON_ANGLE_DELTA = 1.0d;
 
     /**
-     * Temporary inner simple input event manager.
+     * Temporary inner input event manager instantiation.
      */
-    private SimpleInputEventManager inputEventManager = new SimpleInputEventManager();
+    private InputEventManagerPlaynKeyboardImpl inputEventManager = new InputEventManagerPlaynKeyboardImpl(CANNON_ANGLE_DELTA);
 
     private Cannon cannon;
     private ImageLayer cannonLayer;
@@ -57,12 +56,13 @@ public class BubbleShooter implements Game, Keyboard.Listener {
     }
 
     private void setListeners() {
-        PlayN.keyboard().setListener(this);
+        PlayN.keyboard().setListener(inputEventManager);
 
         inputEventManager.setOnCannonAngleChangedListener(new CannonAngleChangedListener() {
             @Override
             public void onAngleChanged(double angle) {
                 cannon.tilt(angle);
+                cannonLayer.setRotation(degreesToRadians(cannon.getAngle()));
             }
         });
     }
@@ -97,31 +97,7 @@ public class BubbleShooter implements Game, Keyboard.Listener {
         return UPDATE_FRAME_RATE;
     }
 
-    @Override
-    public void onKeyDown(Keyboard.Event event) {
-        switch (event.key()) {
-            case LEFT:
-                inputEventManager.onCannonAngleChanged(-CANNON_ANGLE_DELTA);
-                break;
-            case RIGHT:
-                inputEventManager.onCannonAngleChanged(CANNON_ANGLE_DELTA);
-                break;
-            default:
-                // Do not process other keys.
-                break;
-        }
-        cannonLayer.setRotation(degreesToRadians(cannon.getAngle()));
-    }
-
     private float degreesToRadians(double angle) {
        return (float) Math.toRadians(angle);
-    }
-
-    @Override
-    public void onKeyTyped(Keyboard.TypedEvent event) {
-    }
-
-    @Override
-    public void onKeyUp(Keyboard.Event event) {
     }
 }
