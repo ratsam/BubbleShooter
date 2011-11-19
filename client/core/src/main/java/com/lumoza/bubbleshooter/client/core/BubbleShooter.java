@@ -18,7 +18,7 @@ public class BubbleShooter implements Game, Keyboard.Listener {
     private static final int UPDATE_FRAME_RATE = 25;
     private static final double CANNON_ANGLE_DELTA = 1.0d;
 
-    private static Cannon cannon;
+    private Cannon cannon;
     private ImageLayer cannonLayer;
 
 
