@@ -16,7 +16,7 @@ public class Cannon {
      * @param delta angle to tilt left
      */
     public void tiltLeft(double delta) {
-        setAngle(getAllowedAngleByDelta(-delta));
+        tilt(-delta);
     }
 
     /**
@@ -25,6 +25,10 @@ public class Cannon {
      * @param delta angle to tilt right
      */
     public void tiltRight(double delta) {
+        tilt(delta);
+    }
+
+    public void tilt(double delta) {
         setAngle(getAllowedAngleByDelta(delta));
     }
 
