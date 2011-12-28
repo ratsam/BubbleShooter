@@ -4,22 +4,18 @@ import com.lumoza.bubbleshooter.service.game.GameWorld;
 import com.lumoza.bubbleshooter.service.game.Position;
 import org.jbox2d.common.Vec2;
 
-import javax.annotation.concurrent.NotThreadSafe;
+import java.io.Serializable;
 
 /**
- * Temporary, not thread-safe nearest empty landing position resolver.
- * Need to be reworked.
+ * Helper class for resolving nearest available landing position.
+ * Landing position is an empty position that either has at least one neighbor bubble or located at zero row.
  */
-@NotThreadSafe
 public class NearestEmptyPositionResolver {
 
     private static final float TRIANGLE_HEIGHT_MOD = (float) (Math.sqrt(3) / 2);
 
     private final float bubbleSize;
     private final GameWorld gameWorld;
-
-    private double minDistance;
-    private Position matchedPosition = null;
 
     /**
      * Constructor.
@@ -40,42 +36,27 @@ public class NearestEmptyPositionResolver {
      * @return nearest landing position
      */
     public Position resolveForCoordinates(float bodyPositionX, float bodyPositionY) {
-        // TODO: replace with algorithm that provides better performance
-        // BTW coordinates for all row/column pairs can be precalculated.
-        minDistance = bubbleSize * 1.5;
-        matchedPosition = null;
+        final State state = new State(bodyPositionX, bodyPositionY);
+        state.setMinDistance(bubbleSize * 1.5);
 
-        doResolveForCoordinates(bodyPositionX, bodyPositionY);
+        doResolveForCoordinates(state);
 
-        return matchedPosition;
+        return state.getMatchedPosition();
     }
 
-    private void doResolveForCoordinates(float bodyPositionX, float bodyPositionY) {
+    private void doResolveForCoordinates(State state) {
+        // TODO: replace with algorithm that provides better performance
+        // BTW coordinates for all row/column pairs can be precalculated.
         for (int row = 0, rowsCount = gameWorld.rowsCount(); row < rowsCount; row++) {
-            if (row > 0) {
-                if (!gameWorld.hasBubbles(row - 1)) { // Kind of optimisation
-                    break;
-                }
+            if (row > 0 && !gameWorld.hasBubbles(row - 1)) { // Kind of optimisation
+                break;
             }
             final float candidatePosY = getBubbleYCoordinate(row);
-            if (Math.abs(bodyPositionY - candidatePosY) > minDistance) { // Kind of optimisation
+            if (Math.abs(state.getBodyPositionY() - candidatePosY) > state.getMinDistance()) { // Kind of optimisation
                 continue;
             }
 
-            processColumns(row, candidatePosY, bodyPositionX, bodyPositionY);
-        }
-    }
-
-    private void processColumns(int row, float candidatePosY, float bodyPositionX, float bodyPositionY) {
-        for (int column = 0, rowSize = gameWorld.rowSize(row); column < rowSize - (row % 2); column++) {
-            final float candidatePosX = getBubbleXCoordinate(row, column);
-            if (Math.abs(bodyPositionX - candidatePosX) < minDistance) { // Kind of optimisation
-                final double candidateDistance = distance(bodyPositionX, bodyPositionY, candidatePosX, candidatePosY);
-                if (candidateDistance < minDistance && gameWorld.isLandingPosition(row, column)) {
-                    matchedPosition = new Position(row, column);
-                    minDistance = candidateDistance;
-                }
-            }
+            processColumns(row, state);
         }
     }
 
@@ -109,10 +90,76 @@ public class NearestEmptyPositionResolver {
         return posX;
     }
 
+    private void processColumns(int row, State state) {
+        for (int column = 0, rowSize = gameWorld.rowSize(row); column < rowSize - (row % 2); column++) {
+            final float candidatePosX = getBubbleXCoordinate(row, column);
+            if (Math.abs(state.getBodyPositionX() - candidatePosX) < state.getMinDistance()) { // Kind of optimisation
+                processColumn(row, column, state);
+            }
+        }
+    }
+
+    private double distance(State state, int targetRow, int targetColumn) {
+        final float targetPositionX = getBubbleXCoordinate(targetRow, targetColumn);
+        final float targetPositionY = getBubbleYCoordinate(targetRow);
+        return distance(state.getBodyPositionX(), state.getBodyPositionY(), targetPositionX, targetPositionY);
+    }
+
+    private void processColumn(int row, int column, State state) {
+        final double candidateDistance = distance(state, row, column);
+        if (candidateDistance < state.getMinDistance() && gameWorld.isLandingPosition(row, column)) {
+            state.setMatchedPosition(new Position(row, column));
+            state.setMinDistance(candidateDistance);
+        }
+    }
+
     private double distance(double x1, double y1, double x2, double y2) {
         double xx = Math.pow(x1 - x2, 2);
         double yy = Math.pow(y1 - y2, 2);
         double sqrDistance = Math.abs(xx - yy);
         return Math.sqrt(sqrDistance);
+    }
+
+    /**
+     * Inner class to store state.
+     */
+    private static class State implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private final float bodyPositionX;
+        private final float bodyPositionY;
+
+        private double minDistance;
+        private Position matchedPosition;
+
+        private State(float bodyPositionX, float bodyPositionY) {
+            this.bodyPositionX = bodyPositionX;
+            this.bodyPositionY = bodyPositionY;
+        }
+
+        public float getBodyPositionX() {
+            return bodyPositionX;
+        }
+
+        public float getBodyPositionY() {
+            return bodyPositionY;
+        }
+
+        public double getMinDistance() {
+            return minDistance;
+        }
+
+        public void setMinDistance(double minDistance) {
+            this.minDistance = minDistance;
+        }
+
+        public Position getMatchedPosition() {
+            return matchedPosition;
+        }
+
+        public void setMatchedPosition(Position matchedPosition) {
+            this.matchedPosition = matchedPosition;
+        }
     }
 }
