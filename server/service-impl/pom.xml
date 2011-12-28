@@ -15,4 +15,18 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <!-- If you get errors with jbox2d dependencies, try downloading and installing to local repository from http://jbox2d.googlecode.com/svn/trunk/ -->
+        <dependency>
+            <groupId>org.jbox2d</groupId>
+            <artifactId>jbox2d-testbed</artifactId>
+            <version>2.1.2.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -30,6 +30,14 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>1.3.9</version>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>web</module>
         <module>service-api</module>
