@@ -68,7 +68,7 @@ public class GamePhysicProcessor {
             fireBubble.setLinearVelocity(calculateFireLinearVelocity(degreesAngle));
         }
     }
-    
+
     private Vec2 calculateFireLinearVelocity(double degreesAngle) {
         final Vec2 velocityVector = new Vec2(50, 0);
         final double radiansAngle = Math.toRadians(degreesAngle);
