@@ -70,7 +70,7 @@ public class PhysicObjectsConstructor {
         Body body = physicWorld.createBody(bd);
         body.setUserData("FireBubble");
         Fixture fireBubble = body.createFixture(createBubbleFixtureDef());
-        fireBubble.setRestitution(1);
+        fireBubble.setRestitution(1); // Perfectly elastic collision
         fireBubble.setFriction(0);
 
         return body;
@@ -102,7 +102,7 @@ public class PhysicObjectsConstructor {
      * @return new bubble body
      */
     public Body createBubble(Vec2 position, Object userData) {
-        final BodyDef bd = createBodyDef(position, BodyType.KINEMATIC);
+        final BodyDef bd = createBodyDef(position, BodyType.STATIC);
         final Body body = physicWorld.createBody(bd);
         body.setUserData(userData);
         body.createFixture(createBubbleFixtureDef());
