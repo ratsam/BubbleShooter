@@ -5,7 +5,6 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
@@ -22,6 +21,9 @@ public class PhysicObjectsConstructor {
     private final float bubbleSize;
 
     private World physicWorld;
+
+    private BodyDef cachedFireBubbleBodyDef;
+    private FixtureDef cachedFireBubbleFixtureDef;
 
     /**
      * Constructor.
@@ -63,25 +65,42 @@ public class PhysicObjectsConstructor {
      * @return new fire bubble body
      */
     public Body createFireBubble() {
-        float posX = bubbleSize * rowSizeMax / 2f;
-        float posY = 0;
-
-        BodyDef bd = createBodyDef(new Vec2(posX, posY), BodyType.DYNAMIC);
-        Body body = physicWorld.createBody(bd);
-        body.setUserData("FireBubble");
-        body.setBullet(true); // Use continuous collision detection for fire bubble
-        Fixture fireBubble = body.createFixture(createBubbleFixtureDef());
-        fireBubble.setRestitution(1); // Perfectly elastic collision
-        fireBubble.setFriction(0);
+        Body body = physicWorld.createBody(createFireBubbleBodyDef());
+        body.createFixture(createBubbleFixtureDef());
 
         return body;
     }
 
+    private BodyDef createFireBubbleBodyDef() {
+        if (cachedFireBubbleBodyDef == null) {
+            cachedFireBubbleBodyDef = doCreateFireBubbleBodyDef();
+        }
+        return cachedFireBubbleBodyDef;
+    }
+
+    private BodyDef doCreateFireBubbleBodyDef() {
+        final BodyDef bd = new BodyDef();
+        bd.type = BodyType.DYNAMIC;
+        bd.position = new Vec2(bubbleSize * rowSizeMax / 2f, 0);
+        bd.bullet = true;
+        bd.userData = "FireBubble";
+        return bd;
+    }
+
     private FixtureDef createBubbleFixtureDef() {
+        if (cachedFireBubbleFixtureDef == null) {
+            cachedFireBubbleFixtureDef = doCreateBubbleFixtureDef();
+        }
+        return cachedFireBubbleFixtureDef;
+    }
+
+    private FixtureDef doCreateBubbleFixtureDef() {
         final FixtureDef fd = new FixtureDef();
         final CircleShape cd = new CircleShape();
         cd.m_radius = bubbleSize / 2;
         fd.shape = cd;
+        fd.restitution = 1; // Perfectly elastic collision
+        fd.friction = 0;
         return fd;
     }
 
