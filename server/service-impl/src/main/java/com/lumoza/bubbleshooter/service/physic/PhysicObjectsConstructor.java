@@ -69,6 +69,7 @@ public class PhysicObjectsConstructor {
         BodyDef bd = createBodyDef(new Vec2(posX, posY), BodyType.DYNAMIC);
         Body body = physicWorld.createBody(bd);
         body.setUserData("FireBubble");
+        body.setBullet(true); // Use continuous collision detection for fire bubble
         Fixture fireBubble = body.createFixture(createBubbleFixtureDef());
         fireBubble.setRestitution(1); // Perfectly elastic collision
         fireBubble.setFriction(0);
