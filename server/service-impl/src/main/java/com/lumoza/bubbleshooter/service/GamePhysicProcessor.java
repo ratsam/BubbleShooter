@@ -58,14 +58,24 @@ public class GamePhysicProcessor {
 
     /**
      * Create fire bubble (if not exists yet).
+     *
+     * @param degreesAngle angle (in degrees) to fire
      */
-    public void fire() {
+    public void fire(double degreesAngle) {
         if (fireBubble == null) {
             fireBubble = physicObjectsConstructor.createFireBubble();
 
-            // TODO: calc vector depending on mouse position
-            fireBubble.setLinearVelocity(new Vec2((int) (Math.random() * 18) - 9, (int) (Math.random() * 35)));
+            fireBubble.setLinearVelocity(calculateFireLinearVelocity(degreesAngle));
         }
+    }
+    
+    private Vec2 calculateFireLinearVelocity(double degreesAngle) {
+        final Vec2 velocityVector = new Vec2(50, 0);
+        final double radiansAngle = Math.toRadians(degreesAngle);
+        final double newX = velocityVector.x * Math.cos(radiansAngle) - velocityVector.y * Math.sin(radiansAngle);
+        final double newY = velocityVector.x * Math.sin(radiansAngle) + velocityVector.y * Math.cos(radiansAngle);
+
+        return new Vec2((float) newX, (float) newY);
     }
 
     /**

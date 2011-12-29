@@ -7,6 +7,7 @@ import com.lumoza.bubbleshooter.service.game.GameWorldMapBasedImpl;
 import com.lumoza.bubbleshooter.service.game.HexagonalGameMapImpl;
 import com.lumoza.bubbleshooter.service.game.Position;
 import com.lumoza.bubbleshooter.service.physic.PhysicObjectsConstructor;
+import org.apache.commons.lang.math.RandomUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
@@ -75,7 +76,7 @@ public class PhysicsTestbedTest extends TestbedTest {
     @Override
     public void keyPressed(char argKeyChar, int argKeyCode) {
         if (argKeyChar == 'f') { // Fire button pressed
-            gamePhysicProcessor.fire();
+            gamePhysicProcessor.fire(RandomUtils.nextFloat() * 160 + 10);
             return;
         }
 
