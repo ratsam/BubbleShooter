@@ -20,35 +20,17 @@ import org.jbox2d.dynamics.contacts.Contact;
  */
 public class GamePhysicProcessor {
 
-    private static final float TRIANGLE_HEIGHT_MOD = (float) (Math.sqrt(3) / 2);
-
-    private static final float BUBBLE_SIZE = 2.0f;
-
-    private final int rowsCount;
-    private final int rowSizeMax;
-
-    private final PhysicObjectsConstructor physicObjectsConstructor;
-
     private GameWorld gameWorld;
     private World physicWorld;
+
+    private PositionToCoordinatesConverter positionConverter;
+    private PhysicObjectsConstructor physicObjectsConstructor;
+    private NearestEmptyPositionResolver landingPositionResolver;
 
     private Body fireBubble;
     private Edges edges;
 
     private ContactInfoHistory contactInfoHistory = new ContactInfoHistory();
-
-    /**
-     * Constructor.
-     *
-     * @param rowsCount rows count to use
-     * @param rowSizeMax max row size to use
-     */
-    public GamePhysicProcessor(int rowsCount, int rowSizeMax) {
-        this.rowsCount = rowsCount;
-        this.rowSizeMax = rowSizeMax;
-
-        physicObjectsConstructor = new PhysicObjectsConstructor(rowsCount, rowSizeMax, BUBBLE_SIZE);
-    }
 
     /**
      * Initialize method.
@@ -69,37 +51,9 @@ public class GamePhysicProcessor {
 
     private void createPhysicBubbles() {
         for (GameBubble bubble : gameWorld.getBubbles()) {
-            physicObjectsConstructor.createBubble(getBubbleCoordinates(bubble.getPosition()));
+            Vec2 coordinates = positionConverter.convert(bubble.getPosition());
+            physicObjectsConstructor.createBubble(coordinates);
         }
-    }
-
-    private Vec2 getBubbleCoordinates(Position position) {
-        return getBubbleCoordinates(position.getRow(), position.getColumn());
-    }
-
-    /**
-     * Bubbles should be hexagonal packed (@see Circle Packing for more details).
-     * Talking short, there must be the same distance between centers of any two nearby circles.
-     *
-     * @param row bubble row
-     * @param column bubble column
-     * @return Vec2 instance with bubble position
-     */
-    private Vec2 getBubbleCoordinates(int row, int column) {
-        return new Vec2(getBubbleXCoordinate(row, column), getBubbleYCoordinate(row));
-    }
-
-    private float getBubbleYCoordinate(int row) {
-        return ((rowsCount - row) * TRIANGLE_HEIGHT_MOD - 0.5f) * BUBBLE_SIZE;
-    }
-
-    private float getBubbleXCoordinate(int row, int column) {
-        float posX = (rowSizeMax - (rowSizeMax - column) + 0.5f) * BUBBLE_SIZE;
-        if (row % 2 != 0) {
-            posX += BUBBLE_SIZE / 2;
-        }
-
-        return posX;
     }
 
     /**
@@ -137,8 +91,7 @@ public class GamePhysicProcessor {
     }
 
     private Position getNearestEmptyGamePosition(float posX, float posY) {
-        final NearestEmptyPositionResolver resolver = new NearestEmptyPositionResolver(BUBBLE_SIZE, gameWorld);
-        return resolver.resolveForCoordinates(posX, posY);
+        return landingPositionResolver.resolveForCoordinates(posX, posY);
     }
 
     private void preSolveContact(Contact contact) {
@@ -215,8 +168,9 @@ public class GamePhysicProcessor {
 
     private void attachGameWorldListeners() {
         gameWorld.addBubbleCreationListener(new GameWorld.BubbleCreationListener() {
-            public void onBubbleCreated(GameBubble gameBubble) {
-                physicObjectsConstructor.createBubble(getBubbleCoordinates(gameBubble.getPosition()));
+            public void onBubbleCreated(GameBubble bubble) {
+                Vec2 coordinates = positionConverter.convert(bubble.getPosition());
+                physicObjectsConstructor.createBubble(coordinates);
             }
         });
 
@@ -235,13 +189,23 @@ public class GamePhysicProcessor {
     public void setPhysicWorld(World physicWorld) {
         this.physicWorld = physicWorld;
 
-        physicObjectsConstructor.setPhysicWorld(physicWorld);
-
         physicWorld.setContactListener(new BaseContactListener() {
             @Override
             public void preSolve(Contact contact, Manifold oldManifold) {
                 GamePhysicProcessor.this.preSolveContact(contact);
             }
         });
+    }
+
+    public void setPositionConverter(PositionToCoordinatesConverter positionConverter) {
+        this.positionConverter = positionConverter;
+    }
+
+    public void setPhysicObjectsConstructor(PhysicObjectsConstructor physicObjectsConstructor) {
+        this.physicObjectsConstructor = physicObjectsConstructor;
+    }
+
+    public void setLandingPositionResolver(NearestEmptyPositionResolver landingPositionResolver) {
+        this.landingPositionResolver = landingPositionResolver;
     }
 }

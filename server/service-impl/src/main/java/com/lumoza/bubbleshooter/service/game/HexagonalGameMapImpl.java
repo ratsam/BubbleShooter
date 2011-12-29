@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Hexagonal game map implementation.
  */
-public class HexagonalGameMap implements GameMap {
+public class HexagonalGameMapImpl implements GameMap {
 
     private final GameBubble[][] bubbles;
 
@@ -18,11 +18,11 @@ public class HexagonalGameMap implements GameMap {
      * @param rows rows count of the map
      * @param maxRowSize max row size to use
      */
-    public HexagonalGameMap(int rows, int maxRowSize) {
+    public HexagonalGameMapImpl(int rows, int maxRowSize) {
         this(generateEmptyMap(rows, maxRowSize));
     }
 
-    private HexagonalGameMap(GameBubble[][] bubbles) {
+    private HexagonalGameMapImpl(GameBubble[][] bubbles) {
         this.bubbles = bubbles;
     }
 

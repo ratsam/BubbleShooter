@@ -4,8 +4,9 @@ import com.lumoza.bubbleshooter.service.game.GameBubble;
 import com.lumoza.bubbleshooter.service.game.GameMap;
 import com.lumoza.bubbleshooter.service.game.GameWorld;
 import com.lumoza.bubbleshooter.service.game.GameWorldMapBasedImpl;
-import com.lumoza.bubbleshooter.service.game.HexagonalGameMap;
+import com.lumoza.bubbleshooter.service.game.HexagonalGameMapImpl;
 import com.lumoza.bubbleshooter.service.game.Position;
+import com.lumoza.bubbleshooter.service.physic.PhysicObjectsConstructor;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
@@ -14,6 +15,7 @@ public class PhysicsTestbedTest extends TestbedTest {
 
     private static final int ROWS_COUNT = 12;
     private static final int ROW_SIZE_MAX = 8;
+    private static final float BUBBLE_RADIUS = 1f;
 
     private GamePhysicProcessor gamePhysicProcessor;
 
@@ -21,20 +23,26 @@ public class PhysicsTestbedTest extends TestbedTest {
     public void initTest(boolean argDeserialized) {
         setTitle("Testing Bubble Shooter physics");
 
-        gamePhysicProcessor = new GamePhysicProcessor(ROWS_COUNT, ROW_SIZE_MAX);
+        gamePhysicProcessor = new GamePhysicProcessor();
 
         getWorld().setGravity(new Vec2(0, 0)); // Set zero gravity
         getWorld().setContinuousPhysics(true);
 
         GameWorld gameWorld = new GameWorldMapBasedImpl(createGameWorldMap());
+        PositionToCoordinatesConverter positionConverter = new HexagonalConverterImpl(ROWS_COUNT, ROW_SIZE_MAX, BUBBLE_RADIUS);
+        PhysicObjectsConstructor physicObjectsConstructor = new PhysicObjectsConstructor(ROWS_COUNT, ROW_SIZE_MAX, BUBBLE_RADIUS * 2);
+        physicObjectsConstructor.setPhysicWorld(getWorld());
         gamePhysicProcessor.setGameWorld(gameWorld);
         gamePhysicProcessor.setPhysicWorld(getWorld());
+        gamePhysicProcessor.setPositionConverter(positionConverter);
+        gamePhysicProcessor.setPhysicObjectsConstructor(physicObjectsConstructor);
+        gamePhysicProcessor.setLandingPositionResolver(new NearestEmptyPositionResolver(positionConverter, BUBBLE_RADIUS * 2, gameWorld));
 
         gamePhysicProcessor.init();
     }
 
     private GameMap createGameWorldMap() {
-        final GameMap gameMap = new HexagonalGameMap(ROWS_COUNT, ROW_SIZE_MAX);
+        final GameMap gameMap = new HexagonalGameMapImpl(ROWS_COUNT, ROW_SIZE_MAX);
         fillMapBubbles(gameMap);
         return gameMap;
     }

@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public class NearestEmptyPositionResolver {
 
-    private static final float TRIANGLE_HEIGHT_MOD = (float) (Math.sqrt(3) / 2);
+    private final PositionToCoordinatesConverter positionConverter;
 
     private final float bubbleSize;
     private final GameWorld gameWorld;
@@ -20,10 +20,12 @@ public class NearestEmptyPositionResolver {
     /**
      * Constructor.
      *
+     * @param positionConverter Position to Coordinates converter
      * @param bubbleSize bubble size to use
      * @param gameWorld game world to use
      */
-    public NearestEmptyPositionResolver(float bubbleSize, GameWorld gameWorld) {
+    public NearestEmptyPositionResolver(PositionToCoordinatesConverter positionConverter, float bubbleSize, GameWorld gameWorld) {
+        this.positionConverter = positionConverter;
         this.bubbleSize = bubbleSize;
         this.gameWorld = gameWorld;
     }
@@ -51,7 +53,7 @@ public class NearestEmptyPositionResolver {
             if (row > 0 && !gameWorld.hasBubbles(row - 1)) { // Kind of optimisation
                 break;
             }
-            final float candidatePosY = getBubbleYCoordinate(row);
+            final float candidatePosY = positionConverter.yCoordinateFromRow(row);
             if (Math.abs(state.getBodyPositionY() - candidatePosY) > state.getMinDistance()) { // Kind of optimisation
                 continue;
             }
@@ -60,39 +62,9 @@ public class NearestEmptyPositionResolver {
         }
     }
 
-    private Vec2 getBubbleCoordinates(Position position) {
-        return getBubbleCoordinates(position.getRow(), position.getColumn());
-    }
-
-    /**
-     * Bubbles should be hexagonal packed (@see Circle Packing for more details).
-     * Talking short, there must be the same distance between centers of any two nearby circles.
-     *
-     * @param row bubble row
-     * @param column bubble column
-     * @return Vec2 instance with bubble position
-     */
-    private Vec2 getBubbleCoordinates(int row, int column) {
-        return new Vec2(getBubbleXCoordinate(row, column), getBubbleYCoordinate(row));
-    }
-
-    private float getBubbleYCoordinate(int row) {
-        return ((gameWorld.rowsCount() - row) * TRIANGLE_HEIGHT_MOD - 0.5f) * bubbleSize;
-    }
-
-    private float getBubbleXCoordinate(int row, int column) {
-        int rowSize = gameWorld.rowSize(row);
-        float posX = (rowSize - (rowSize - column) + 0.5f) * bubbleSize;
-        if (row % 2 != 0) {
-            posX += bubbleSize / 2;
-        }
-
-        return posX;
-    }
-
     private void processColumns(int row, State state) {
         for (int column = 0, rowSize = gameWorld.rowSize(row); column < rowSize - (row % 2); column++) {
-            final float candidatePosX = getBubbleXCoordinate(row, column);
+            final float candidatePosX = positionConverter.xCoordinateFromPosition(row, column);
             if (Math.abs(state.getBodyPositionX() - candidatePosX) < state.getMinDistance()) { // Kind of optimisation
                 processColumn(row, column, state);
             }
@@ -100,9 +72,8 @@ public class NearestEmptyPositionResolver {
     }
 
     private double distance(State state, int targetRow, int targetColumn) {
-        final float targetPositionX = getBubbleXCoordinate(targetRow, targetColumn);
-        final float targetPositionY = getBubbleYCoordinate(targetRow);
-        return distance(state.getBodyPositionX(), state.getBodyPositionY(), targetPositionX, targetPositionY);
+        final Vec2 coordinates = positionConverter.convert(targetRow, targetColumn);
+        return distance(state.getBodyPositionX(), state.getBodyPositionY(), coordinates.x, coordinates.y);
     }
 
     private void processColumn(int row, int column, State state) {

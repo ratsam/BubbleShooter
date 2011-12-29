@@ -14,6 +14,7 @@ import org.jbox2d.dynamics.World;
  */
 public class PhysicObjectsConstructor {
 
+    // TODO: get rid of this constant, use Position to Coordinates converter.
     private static final float TRIANGLE_HEIGHT_MOD = (float) (Math.sqrt(3) / 2);
 
     private final int rowsCount;
