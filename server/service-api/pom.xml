@@ -15,4 +15,7 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <checkstyle.config.location>../../config/checkstyle.xml</checkstyle.config.location>
+    </properties>
 </project>
