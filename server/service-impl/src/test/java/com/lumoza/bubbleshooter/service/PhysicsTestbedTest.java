@@ -18,13 +18,13 @@ public class PhysicsTestbedTest extends TestbedTest {
     private static final int ROW_SIZE_MAX = 8;
     private static final float BUBBLE_RADIUS = 1f;
 
-    private GamePhysicProcessor gamePhysicProcessor;
+    private GamePhysicProcessorImpl gamePhysicProcessor;
 
     @Override
     public void initTest(boolean argDeserialized) {
         setTitle("Testing Bubble Shooter physics");
 
-        gamePhysicProcessor = new GamePhysicProcessor();
+        gamePhysicProcessor = new GamePhysicProcessorImpl();
 
         getWorld().setGravity(new Vec2(0, 0)); // Set zero gravity
         getWorld().setContinuousPhysics(true);
