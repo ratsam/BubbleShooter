@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Game physics processor should be created/restored for each game -->
+    <bean id="gamePhysicProcessor" class="com.lumoza.bubbleshooter.service.GamePhysicProcessorImpl" init-method="init">
+        <property name="gameWorld" ref="gameWorld"/>
+        <property name="physicWorld" ref="physicWorld"/>
+        <property name="positionConverter" ref="positionToCoordinatesConverter"/>
+        <property name="physicObjectsConstructor" ref="physicObjectsConstructor"/>
+        <property name="landingPositionResolver" ref="nearestEmptyLandingPositionResolver"/>
+    </bean>
+
+    <bean id="positionToCoordinatesConverter" class="com.lumoza.bubbleshooter.service.HexagonalConverterImpl">
+        <constructor-arg name="rowsCount" value="12"/>
+        <constructor-arg name="maxRowSize" value="7"/>
+        <constructor-arg name="bubbleRadius" value="1"/>
+    </bean>
+
+    <bean id="gameWorld" class="com.lumoza.bubbleshooter.service.game.GameWorldMapBasedImpl">
+        <constructor-arg ref="gameMap"/>
+    </bean>
+
+    <bean id="gameMap" class="com.lumoza.bubbleshooter.service.game.HexagonalGameMapImpl">
+        <constructor-arg name="rows" value="12"/>
+        <constructor-arg name="maxRowSize" value="7"/>
+    </bean>
+
+    <bean id="physicWorld" class="org.jbox2d.dynamics.World">
+        <constructor-arg name="gravity">
+            <bean class="org.jbox2d.common.Vec2"/>
+        </constructor-arg>
+        <constructor-arg name="doSleep" value="true"/>
+        <property name="continuousPhysics" value="true"/>
+    </bean>
+
+    <bean id="physicObjectsConstructor" class="com.lumoza.bubbleshooter.service.physic.PhysicObjectsConstructor">
+        <constructor-arg name="rowsCount" value="12"/>
+        <constructor-arg name="rowSizeMax" value="7"/>
+        <constructor-arg name="bubbleSize" value="2"/>
+        <property name="physicWorld" ref="physicWorld"/>
+    </bean>
+
+    <bean id="nearestEmptyLandingPositionResolver" class="com.lumoza.bubbleshooter.service.NearestEmptyPositionResolver">
+        <constructor-arg name="positionConverter" ref="positionToCoordinatesConverter"/>
+        <constructor-arg name="bubbleSize" value="2"/>
+        <constructor-arg name="gameWorld" ref="gameWorld"/>
+    </bean>
+</beans>
